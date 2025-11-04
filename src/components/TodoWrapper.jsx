@@ -53,7 +53,7 @@ function TodoWrapper() {
                     return t;
                 })
             );
-        }, 2000);
+        }, 5000);
 
         return () => clearInterval(interval);
     }, []);
