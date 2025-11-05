@@ -7,7 +7,7 @@ const Header = () => {
     return (
         <header className="top-bar">
             <div className="icons">
-                <h1><FontAwesomeIcon className='edit' icon={faListCheck} /> ToDo ! </h1>
+                <h1><FontAwesomeIcon className='edit' icon={faListCheck} /> ToDo! </h1>
             </div>
         </header>
     );
