@@ -7,6 +7,7 @@ import EditTodoForm from "./EditTodoForm";
 import Todo from "./Todo";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Swal from "sweetalert2";
 
 function TodoWrapper() {
     const [todos, setTodos] = useState([]);
@@ -25,7 +26,35 @@ function TodoWrapper() {
         ]);
     };
 
-    const deleteTodo = (id) => setTodos((prev) => prev.filter((t) => t.id !== id));
+    const deleteTodo = (id) => {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "This will permanently delete your todo.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#6a11cb",
+            background: "#17172bff",
+            color: "#ffffff",
+            confirmButtonText: "Yes, delete it!",
+            cancelButtonText: "Cancel",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                setTodos((prev) => prev.filter((t) => t.id !== id));
+                Swal.fire({
+                    icon: "success",
+                    title: "Deleted!",
+                    text: "Your todo has been removed.",
+                    timer: 1500,
+                    background: "#17172bff",
+                    color: "#ffffff",
+                    showConfirmButton: false,
+                });
+            }
+        });
+    };
+
+
 
     const toggleComplete = (id) =>
         setTodos((prev) => prev.map((t) => (t.id === id ? { ...t, completed: !t.completed } : t)));
@@ -34,12 +63,36 @@ function TodoWrapper() {
         setTodos((prev) => prev.map((t) => (t.id === id ? { ...t, isEditing: !t.isEditing } : t)));
 
     const updateTodo = (newTask, id, newDeadline) => {
+        const trimmedTask = (newTask || "").trim();
+
+        const current = todos.find((t) => t.id === id);
+        if (!current)
+            return toast.error("Todo not found !!!", { position: "top-right", autoClose: 2000 });
+
+        if (!trimmedTask)
+            return toast.warning("Enter a task !!!", { position: "top-right", autoClose: 2000 });
+
+        if (!newDeadline)
+            return toast.warning("Set a deadline (date & time) !!!", { position: "top-right", autoClose: 2000 });
+
+        const sameTask = trimmedTask === current.task;
+        const sameDeadline = newDeadline === current.deadline;
+
+        if (sameTask && sameDeadline)
+            return toast.info("No changes detected !!!", { position: "top-right", autoClose: 2000 });
+
         setTodos((prev) =>
             prev.map((t) =>
-                t.id === id ? { ...t, task: newTask, deadline: newDeadline, isEditing: false } : t
+                t.id === id
+                    ? { ...t, task: trimmedTask, deadline: newDeadline, isEditing: false }
+                    : t
             )
         );
+
+        toast.success("Todo updated successfully!", { position: "top-right", autoClose: 2000 });
     };
+
+
 
     useEffect(() => {
         const interval = setInterval(() => {

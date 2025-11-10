@@ -7,8 +7,7 @@ const EditTodoForm = ({ updateTodo, task }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (!value.trim()) return;
-        updateTodo(value.trim(), task.id, deadline);
+        updateTodo(value, task.id, deadline);
     };
 
     return (
